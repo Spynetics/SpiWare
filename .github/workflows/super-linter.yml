@@ -1,5 +1,8 @@
 name: Lint Code Base
 
+permissions:
+  contents: read
+
 on:
   push:
     branches: [ "main" ]
