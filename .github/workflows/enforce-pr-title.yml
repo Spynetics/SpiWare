@@ -16,11 +16,13 @@ jobs:
       - name: Check PR title format
         run: |
           TITLE="${{ github.event.pull_request.title }}"
-          NUMBER=${{ github.event.pull_request.number }}"
+          NUMBER="${{ github.event.pull_request.number }}"
 
           echo "PR Title: $TITLE"
 
-          if [[ "$TITLE" != *"(#${NUMBER})"* ]]; then
-            echo "::error ::PR title must include '(#${NUMBER})' to be used as squash commit message"
+          REQUIRED_PART="(#${NUMBER})"
+
+          if [[ "$TITLE" != *"$REQUIRED_PART"* ]]; then
+            echo "::error ::PR title must include '$REQUIRED_PART' to be used as squash commit message"
             exit 1
           fi
