@@ -12,10 +12,13 @@ jobs:
         run: |
           TITLE="${{ github.event.pull_request.title }}"
           NUMBER=${{ github.event.pull_request.number }}
-          
+
           echo "PR Title: $TITLE"
-          
-          if [[ "$TITLE" != *"(#${NUMBER})"* ]]; then
-            echo "::error ::PR title must include '(#${NUMBER})' to be used as squash commit message"
+
+          REQUIRED="(#${NUMBER})"
+
+          if [[ "$TITLE" != *"$REQUIRED"* ]]; then
+            echo "::error ::PR title must include '$REQUIRED'"
+            echo "::error ::to be used as squash commit message"
             exit 1
           fi
