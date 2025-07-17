@@ -10,7 +10,7 @@ permissions:
   pull-requests: read
 
 jobs:
-  check-title:
+  enforce-pr-title:
     runs-on: ubuntu-latest
     steps:
       - name: Check PR title format
