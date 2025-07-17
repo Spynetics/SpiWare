@@ -221,7 +221,7 @@ if not requestsDisabled then
 			return
 		end
 		if useStudio then
-			print('Sending Analytics')
+			--print('Sending Analytics')
 		else
 			if debugX then warn('Reporting Analytics') end
 			analyticsLib:report(
@@ -967,7 +967,7 @@ local function SaveConfiguration()
 	if not CEnabled or not globalLoaded then return end
 
 	if debugX then
-		print('Saving')
+		--print('Saving')
 	end
 
 	local Data = {}
@@ -1564,7 +1564,7 @@ end
 
 
 function RayfieldLibrary:CreateWindow(Settings)
-	print('creating window')
+	--print('creating window')
 	if Rayfield:FindFirstChild('Loading') then
 		if getgenv and not getgenv().rayfieldCached then
 			Rayfield.Enabled = true
