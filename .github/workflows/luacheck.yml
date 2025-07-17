@@ -1,0 +1,72 @@
+name: Repo Hygiene Checks
+
+on: [push, pull_request]
+
+jobs:
+  repo-checks:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Lua, Luarocks, Unzip
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lua5.1 luarocks unzip
+
+      - name: Install Luacheck
+        run: luarocks install luacheck
+
+      - name: Run Luacheck
+        run: |
+          luacheck . \
+            --exclude-files 'libs/**' \
+            --no-color
+
+      - name: Install Stylua
+        run: |
+          curl -L https://github.com/JohnnyMorganz/StyLua/releases/latest/download/stylua-linux-x86_64.zip -o stylua.zip
+          unzip stylua.zip -d /usr/local/bin
+
+      - name: Run Stylua for style check
+        run: |
+          stylua --check . --exclude libs
+
+      - name: Check for empty or missing Lua files
+        run: |
+          echo "local lfs = require('lfs')
+local function scan_dir(path)
+    for file in lfs.dir(path) do
+        if file ~= '.' and file ~= '..' then
+            local full_path = path .. '/' .. file
+            local attr = lfs.attributes(full_path)
+            if attr.mode == 'directory' and not full_path:match('^./libs') then
+                scan_dir(full_path)
+            elseif full_path:match('%.lua$') then
+                local f = io.open(full_path, 'r')
+                local content = f:read('*a')
+                f:close()
+                if #content == 0 then
+                    error('Empty Lua file found: ' .. full_path)
+                end
+                if not content:find('-- Version:') then
+                    print('Warning: No version header in ' .. full_path)
+                end
+            end
+        end
+    end
+end
+scan_dir('.')" > integrity_check.lua
+          lua integrity_check.lua
+
+      - name: Run custom static analysis
+        run: |
+          echo "for file in io.popen('find . -name "*.lua" ! -path "./libs/*"'):lines() do
+    local f = io.open(file, 'r')
+    local content = f:read('*a')
+    f:close()
+    if content:find('getrawmetatable') then
+        print('Warning: getrawmetatable found in ' .. file)
+    end
+end" > static_check.lua
+          lua static_check.lua
