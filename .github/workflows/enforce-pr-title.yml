@@ -14,10 +14,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check PR title format
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+          NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          TITLE="${{ github.event.pull_request.title }}"
-          NUMBER=${{ github.event.pull_request.number }}
-
           echo "PR Title: $TITLE"
 
           REQUIRED="(#${NUMBER})"
