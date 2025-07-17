@@ -5,7 +5,7 @@ on:
     types: [opened, edited, synchronize]
 
 jobs:
-  check-title:
+  enforce-pr-title:
     runs-on: ubuntu-latest
     steps:
       - name: Check PR title format
