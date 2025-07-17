@@ -1,2 +1,1 @@
 # Spiware
-Roblox Exploit Script
