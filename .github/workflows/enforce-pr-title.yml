@@ -1,11 +1,13 @@
-permissions:
-  contents: read
-  pull-requests: read
+---
 name: Enforce PR Title Format
 
 on:
   pull_request:
     types: [opened, edited, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: read
 
 jobs:
   check-title:
@@ -14,10 +16,10 @@ jobs:
       - name: Check PR title format
         run: |
           TITLE="${{ github.event.pull_request.title }}"
-          NUMBER=${{ github.event.pull_request.number }}
-          
+          NUMBER=${{ github.event.pull_request.number }}"
+
           echo "PR Title: $TITLE"
-          
+
           if [[ "$TITLE" != *"(#${NUMBER})"* ]]; then
             echo "::error ::PR title must include '(#${NUMBER})' to be used as squash commit message"
             exit 1
