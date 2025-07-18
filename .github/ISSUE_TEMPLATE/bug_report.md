@@ -1,25 +1,24 @@
 ---
 name: Bug report
 about: Create a bug report to help us improve
-title: "[BUG]"
+title: "[BUG] "
 labels: bug
 assignees: ftnick
-
 ---
 
-**Describe the Bug** 
+**Describe the Bug**  
 Provide a clear and concise description of what the script is doing wrong or failing to do. Include the feature or module affected if relevant.
 
 ---
 
-**Script Info** 
+**Script Info**
 
 * Script name or function:
 * Script source (pastebin/GitHub/raw link):
 
 ---
 
-**Steps to Reproduce** 
+**Steps to Reproduce**  
 Explain how to trigger the issue:
 
 1. Attach executor (name + version):
@@ -29,28 +28,28 @@ Explain how to trigger the issue:
 
 ---
 
-**Expected Behavior** 
+**Expected Behavior**  
 Describe what the script *should* have done instead of the bug.
 
 ---
 
-**Screenshots or Videos (if applicable)** 
+**Screenshots or Videos (if applicable)**  
 Include screenshots, console logs, or recordings that show the bug.
 
 ---
 
-**Environment Info** 
+**Environment Info**  
 Please complete the following relevant info:
 
-* **Executor Used**: 
+* **Executor Used**:
 * **Executor Version**:
-* **Roblox Client Type**: \[e.g. PC, UWP, Mobile]
+* **Roblox Client Type**: [e.g. PC, UWP, Mobile]
 * **Roblox Version**:
-* **Operating System**: \[e.g. Windows 10 64-bit]
+* **Operating System**: [e.g. Windows 10 64-bit]
 
 ---
 
-**Additional Context** 
+**Additional Context**  
 Include anything else that might help us understand the issue:
 
 * Game you're testing in (link or ID):
