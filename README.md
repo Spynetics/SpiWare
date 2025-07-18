@@ -5,5 +5,5 @@
 ---
 
 ```luau
-loadstring(game:HttpGet("https://raw.githubusercontent.com/ftnick/SpiWare/refs/heads/main/versions/v0.0.1/loader.lua", true))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/ftnick/SpiWare/refs/heads/main/versions/latest.lua", true))()
 ```
