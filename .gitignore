@@ -1,0 +1,4 @@
+**/dist/
+**/testing/
+**/src/
+selene.toml
