@@ -1597,8 +1597,6 @@ function RayfieldLibrary:CreateWindow(Settings)
 
 	LoadingFrame.Version.TextTransparency = 1
 	LoadingFrame.Title.Text = "SpiWare"
-	LoadingFrame.Subtitle.Text = "made by @ftnick"
-
 
 	if Settings.Icon and Settings.Icon ~= 0 and Topbar:FindFirstChild('Icon') then
 		Topbar.Icon.Visible = true
