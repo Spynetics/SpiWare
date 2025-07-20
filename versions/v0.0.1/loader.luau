@@ -1,1 +1,1 @@
-print("Hello from loader!");
+print("Hello from loader!")
