@@ -16,4 +16,4 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/ftnick/SpiWare/refs/h
 
 ---
 
-Please check out our [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on adding and improving scripts.
+Please check out our [CONTRIBUTING.md](/.github/CONTRIBUTING.md) for guidelines on adding and improving scripts.
