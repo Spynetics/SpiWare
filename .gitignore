@@ -1,5 +1,3 @@
 src/
-!docs/src/
 testing/
-mdbook.exe
 selene.toml
