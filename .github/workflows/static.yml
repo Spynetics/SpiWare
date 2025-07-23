@@ -68,10 +68,11 @@ jobs:
 
       - name: Notify Discord on success
         if: ${{ success() }}
-        uses: dawidd6/action-discord@v3
+        uses: Ilshidur/action-discord@0.3.2
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
         with:
-          webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          message: |
+          args: |
             Deployment Successful
             Repository: ${{ github.repository }}
             Branch: ${{ github.ref_name }}
@@ -79,10 +80,11 @@ jobs:
 
       - name: Notify Discord on failure
         if: ${{ failure() }}
-        uses: dawidd6/action-discord@v3
+        uses: Ilshidur/action-discord@0.3.2
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
         with:
-          webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          message: |
+          args: |
             Deployment Failed
             Repository: ${{ github.repository }}
             Branch: ${{ github.ref_name }}
