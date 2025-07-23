@@ -65,3 +65,25 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Notify Discord on success
+        if: ${{ success() }}
+        uses: dawidd6/action-discord@v3
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          message: |
+            Deployment Successful
+            Repository: ${{ github.repository }}
+            Branch: ${{ github.ref_name }}
+            URL: ${{ steps.deployment.outputs.page_url }}
+
+      - name: Notify Discord on failure
+        if: ${{ failure() }}
+        uses: dawidd6/action-discord@v3
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          message: |
+            Deployment Failed
+            Repository: ${{ github.repository }}
+            Branch: ${{ github.ref_name }}
+            Check logs: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
