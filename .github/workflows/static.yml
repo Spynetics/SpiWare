@@ -46,6 +46,11 @@ jobs:
       - name: Create .nojekyll
         run: touch docs/.nojekyll
 
+      - name: Minify HTML
+        run: |
+          npm install -g html-minifier
+          find docs -name "*.html" -exec html-minifier --collapse-whitespace --remove-comments --minify-css true --minify-js true --output {} --input {} \;
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
