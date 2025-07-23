@@ -49,7 +49,10 @@ jobs:
       - name: Minify HTML
         run: |
           npm install -g html-minifier
-          find docs -name "*.html" -exec html-minifier --collapse-whitespace --remove-comments --minify-css true --minify-js true --output {} --input {} \;
+          find docs -name "*.html" | while read file; do
+            html-minifier --collapse-whitespace --remove-comments --minify-css true --minify-js true "$file" -o "$file.min"
+            mv "$file.min" "$file"
+          done
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
