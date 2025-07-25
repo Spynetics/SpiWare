@@ -4,9 +4,10 @@
 
 ---
 
-> [!CAUTION]
-> **Please verify that the game you are executing the script in is NOT patched.**
-> You can view the status of each individual script and SpiWare core systems at the [SpiWare Status Page](https://spiware.statuspage.io/).
+> [!WARNING]
+> ***SpiWare has officially been archived, and the project is no longer maintained, updated, or receiving bug fixes.***
+> ***All of the source code has been made available in the `src/` directory of this repository, and you are free to use, learn from, and adapt it for your own projects under its current license.***
+> ***Please note that the loader is no longer functional, and no support will be provided for issues or feature requests.***
 
 ---
 
