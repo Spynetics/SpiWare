@@ -1,0 +1,1 @@
+warn("SpiWare is discontinued and no longer maintained.")
