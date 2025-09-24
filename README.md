@@ -4,16 +4,8 @@
 
 ---
 
-> [!CAUTION]
-> **Please verify that the game you are executing the script in is NOT patched.**
-> You can view the status of each individual script and SpiWare core systems at the [SpiWare Status Page](https://spiware.statuspage.io/).
-
----
-
 ```luau
 loadstring(game:HttpGet("https://cdn.jsdelivr.net/gh/Spynetics/SpiWare@main/versions/v0.0.3/loader.luau", true))()
 ```
 
 ---
-
-Please check out our [CONTRIBUTING.md](/.github/CONTRIBUTING.md) for guidelines on adding and improving scripts.
