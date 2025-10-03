@@ -1,5 +1,6 @@
 {
     "description": "Suppress Gun Recoil",
     "author": "@ftnick",
-    "gameID": 6495459333
+    "gameID": 6495459333,
+    "isTogglable": true
 }
