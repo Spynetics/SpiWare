@@ -5,21 +5,6 @@ local SafeScript = {}
 SafeScript._connections = {}
 SafeScript._active = false
 
-local function safeConnect(signal, func)
-    local ok, conn = pcall(function()
-        return signal:Connect(function(...)
-            if not SafeScript._active then return end
-            local s, e = pcall(func, ...)
-            if not s then warn("Error in connection:", e) end
-        end)
-    end)
-    if ok and conn then
-        table.insert(SafeScript._connections, conn)
-    elseif not ok then
-        warn("Failed to connect:", conn)
-    end
-end
-
 local player = Players.LocalPlayer
 if not player then
     warn("LocalPlayer missing; aborting script")
@@ -43,15 +28,24 @@ if not ok or not camObj then
     return SafeScript
 end
 
+local function connectRenderStepped()
+    local conn = RunService.RenderStepped:Connect(function()
+        if SafeScript._active and camera and camObj and camObj:IsA("CFrameValue") then
+            local suc, err = pcall(function()
+                camObj.CFrame = camera.CFrame
+            end)
+            if not suc then warn("Error updating CameraCFrame:", err) end
+        end
+    end)
+    table.insert(SafeScript._connections, conn)
+end
+
 function SafeScript.start()
     if SafeScript._active then return end
     SafeScript._active = true
-
+    -- Only connect if no connections exist yet
     if #SafeScript._connections == 0 then
-        safeConnect(RunService.RenderStepped, function()
-            if not camera or not camObj or not camObj:IsA("CFrameValue") then return end
-            camObj.CFrame = camera.CFrame
-        end)
+        connectRenderStepped()
     end
 end
 
