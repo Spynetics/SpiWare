@@ -38,6 +38,7 @@ local function updatePlayerHitboxes(player)
 end
 
 local function UpdateAllHitboxes()
+    if not running then return end
     for _, player in ipairs(Players:GetPlayers()) do
         if player ~= LocalPlayer then
             updatePlayerHitboxes(player)
@@ -64,31 +65,45 @@ end
 
 _G.StopHitboxScript = function()
     running = false
+
+    -- Disconnect all event connections
     for _, c in ipairs(connections) do
         if c and c.Disconnect then
             pcall(function() c:Disconnect() end)
         end
     end
     connections = {}
+
+    -- Reset hitboxes
     resetHitboxes()
     print("[HitboxPatch] Script stopped and hitboxes reset.")
+end
+
+local function onCharacterAdded(char, player)
+    if not running then return end
+    updatePlayerHitboxes(player)
 end
 
 local function onPlayerAdded(player)
     if player == LocalPlayer then return end
     local charConn = player.CharacterAdded:Connect(function(char)
-        if not running then return end
-        updatePlayerHitboxes(player)
+        onCharacterAdded(char, player)
     end)
     table.insert(connections, charConn)
+    if player.Character then
+        onCharacterAdded(player.Character, player)
+    end
 end
 
+-- Connect existing players
 for _, player in ipairs(Players:GetPlayers()) do
     onPlayerAdded(player)
 end
 
+-- Connect new players
 table.insert(connections, Players.PlayerAdded:Connect(onPlayerAdded))
 
+-- Hitbox update loop
 task.spawn(function()
     while running do
         local ok, err = pcall(UpdateAllHitboxes)
