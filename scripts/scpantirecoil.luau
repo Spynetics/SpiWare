@@ -4,8 +4,9 @@ local Players = game:GetService("Players")
 local SafeScript = {}
 SafeScript._connections = {}
 SafeScript._active = false
+SafeScript._camObjReady = false
 
-print("[CameraSync] Script loaded")
+print("[CameraSync2] Script loaded")
 
 local player = Players.LocalPlayer
 if not player then
@@ -22,35 +23,48 @@ end
 print("[CameraSync] CurrentCamera found")
 
 local camObj
-local ok, err = pcall(function()
-    camObj = player:WaitForChild("PlayerScripts", 10)
-                   :WaitForChild("PlayerModule", 10)
-                   :WaitForChild("CameraCFrame", 10)
-end)
-if not ok or not camObj then
-    warn("[CameraSync] Failed to get CameraCFrame:", err)
-    return SafeScript
+-- Attempt to get CameraCFrame safely, retrying
+local function fetchCamObj()
+    local retries = 0
+    local maxRetries = 20
+    while retries < maxRetries do
+        local ok, obj = pcall(function()
+            return player:WaitForChild("PlayerScripts", 1)
+                         :WaitForChild("PlayerModule", 1)
+                         :WaitForChild("CameraCFrame", 1)
+        end)
+        if ok and obj then
+            camObj = obj
+            print("[CameraSync] CameraCFrame object found:", camObj:GetFullName())
+            SafeScript._camObjReady = true
+            return true
+        end
+        retries = retries + 1
+        task.wait(0.5)
+        print("[CameraSync] Waiting for CameraCFrame, attempt", retries)
+    end
+    warn("[CameraSync] Failed to fetch CameraCFrame after", maxRetries, "attempts")
+    return false
 end
-print("[CameraSync] CameraCFrame object found:", camObj:GetFullName())
 
 local function connectRenderStepped()
     print("[CameraSync] Connecting RenderStepped")
     local conn = RunService.RenderStepped:Connect(function(dt)
-        if SafeScript._active then
-            if camera and camObj and camObj:IsA("CFrameValue") then
-                local suc, e = pcall(function()
-                    camObj.CFrame = camera.CFrame
-                end)
-                if not suc then
-                    warn("[CameraSync] Error updating CameraCFrame:", e)
-                else
-                    print("[CameraSync] CameraCFrame synced at dt:", dt)
-                end
-            else
-                warn("[CameraSync] Camera or camObj invalid")
-            end
+        if not SafeScript._active then
+            return
+        end
+        if not SafeScript._camObjReady or not camera or not camObj or not camObj:IsA("CFrameValue") then
+            warn("[CameraSync] Camera or camObj invalid")
+            return
+        end
+        local suc, e = pcall(function()
+            camObj.CFrame = camera.CFrame
+        end)
+        if not suc then
+            warn("[CameraSync] Error updating CameraCFrame:", e)
         else
-            print("[CameraSync] RenderStepped called but _active = false")
+            -- Uncomment for frame-by-frame debug
+            -- print("[CameraSync] CameraCFrame synced at dt:", dt)
         end
     end)
     table.insert(SafeScript._connections, conn)
@@ -62,13 +76,15 @@ function SafeScript.start()
         print("[CameraSync] start() called but already active")
         return
     end
-    SafeScript._active = true
-    print("[CameraSync] start() called, _active set to true")
-    if #SafeScript._connections == 0 then
-        connectRenderStepped()
-    else
-        print("[CameraSync] Reusing existing connections")
+    print("[CameraSync] start() called, fetching CameraCFrame...")
+    local ok = fetchCamObj()
+    if not ok then
+        warn("[CameraSync] Cannot start: CameraCFrame not ready")
+        return
     end
+    SafeScript._active = true
+    connectRenderStepped()
+    print("[CameraSync] Script is now active")
 end
 
 function SafeScript.stop()
@@ -81,9 +97,7 @@ function SafeScript.Shutdown()
     print("[CameraSync] Shutdown called, cleaning up connections")
     for i, c in ipairs(SafeScript._connections) do
         if c and c.Disconnect then
-            local suc, e = pcall(function()
-                c:Disconnect()
-            end)
+            local suc, e = pcall(function() c:Disconnect() end)
             if not suc then
                 warn("[CameraSync] Error disconnecting connection", i, e)
             else
