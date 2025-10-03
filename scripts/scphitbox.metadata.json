@@ -2,5 +2,5 @@
     "description": "Hitbox extender Script",
     "author": "@ftnick",
     "gameID": 6495459333,
-    "isTogglable": true
+    "isTogglable": false
 }
