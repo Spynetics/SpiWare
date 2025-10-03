@@ -3,7 +3,7 @@ local Players = game:GetService("Players")
 
 local SafeScript = {}
 SafeScript._connections = {}
-SafeScript._active = true
+SafeScript._active = false
 
 local function safeConnect(signal, func)
     local ok, conn = pcall(function()
@@ -20,27 +20,16 @@ local function safeConnect(signal, func)
     end
 end
 
-local function cleanup()
-    SafeScript._active = false
-    for _, c in ipairs(SafeScript._connections) do
-        if c and c.Disconnect then
-            pcall(function() c:Disconnect() end)
-        end
-    end
-    SafeScript._connections = {}
-    print("Camera Sync Script shutdown complete")
-end
-
 local player = Players.LocalPlayer
 if not player then
     warn("LocalPlayer missing; aborting script")
-    return cleanup()
+    return SafeScript
 end
 
 local camera = workspace.CurrentCamera
 if not camera then
     warn("Camera missing; aborting script")
-    return cleanup()
+    return SafeScript
 end
 
 local camObj
@@ -51,13 +40,34 @@ local ok, err = pcall(function()
 end)
 if not ok or not camObj then
     warn("Failed to get CameraCFrame:", err)
-    return cleanup()
+    return SafeScript
 end
 
-safeConnect(RunService.RenderStepped, function()
-    if not camera or not camObj or not camObj:IsA("CFrameValue") then return end
-    camObj.CFrame = camera.CFrame
-end)
+function SafeScript.start()
+    if SafeScript._active then return end
+    SafeScript._active = true
 
-SafeScript.Shutdown = cleanup
+    if #SafeScript._connections == 0 then
+        safeConnect(RunService.RenderStepped, function()
+            if not camera or not camObj or not camObj:IsA("CFrameValue") then return end
+            camObj.CFrame = camera.CFrame
+        end)
+    end
+end
+
+function SafeScript.stop()
+    SafeScript._active = false
+end
+
+function SafeScript.Shutdown()
+    SafeScript._active = false
+    for _, c in ipairs(SafeScript._connections) do
+        if c and c.Disconnect then
+            pcall(function() c:Disconnect() end)
+        end
+    end
+    SafeScript._connections = {}
+    print("Camera Sync Script shutdown complete")
+end
+
 return SafeScript
