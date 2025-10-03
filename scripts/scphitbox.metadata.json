@@ -1,5 +1,6 @@
 {
     "description": "Hitbox extender Script",
     "author": "@ftnick",
-    "gameID": 6495459333
+    "gameID": 6495459333,
+    "isTogglable": true
 }
