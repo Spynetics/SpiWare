@@ -28,22 +28,27 @@ local function safeSetProps(hrp, isEnemy, teamColor)
     end
 end
 
-local function UpdateHitboxes()
+local function updatePlayerHitboxes(player)
+    if not player.Character then return end
+    local hrp = player.Character:FindFirstChild("Head") or player.Character:FindFirstChild("HumanoidRootPart")
+    if hrp then
+        local isEnemy = (player.Team ~= LocalPlayer.Team)
+        safeSetProps(hrp, isEnemy, player.TeamColor)
+    end
+end
+
+local function UpdateAllHitboxes()
     for _, player in ipairs(Players:GetPlayers()) do
-        if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-            local hrp = player.Character:FindFirstChild("Head") or player.Character.HumanoidRootPart
-            if hrp then
-                local isEnemy = (player.Team ~= LocalPlayer.Team)
-                safeSetProps(hrp, isEnemy, player.TeamColor)
-            end
+        if player ~= LocalPlayer then
+            updatePlayerHitboxes(player)
         end
     end
 end
 
 local function resetHitboxes()
     for _, player in ipairs(Players:GetPlayers()) do
-        if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-            local hrp = player.Character:FindFirstChild("Head") or player.Character.HumanoidRootPart
+        if player ~= LocalPlayer and player.Character then
+            local hrp = player.Character:FindFirstChild("Head") or player.Character:FindFirstChild("HumanoidRootPart")
             if hrp then
                 pcall(function()
                     hrp.Size = Vector3.new(2, 2, 1)
@@ -60,19 +65,36 @@ end
 _G.StopHitboxScript = function()
     running = false
     for _, c in ipairs(connections) do
-        c:Disconnect()
+        if c and c.Disconnect then
+            pcall(function() c:Disconnect() end)
+        end
     end
     connections = {}
     resetHitboxes()
     print("[HitboxPatch] Script stopped and hitboxes reset.")
 end
 
+local function onPlayerAdded(player)
+    if player == LocalPlayer then return end
+    local charConn = player.CharacterAdded:Connect(function(char)
+        if not running then return end
+        updatePlayerHitboxes(player)
+    end)
+    table.insert(connections, charConn)
+end
+
+for _, player in ipairs(Players:GetPlayers()) do
+    onPlayerAdded(player)
+end
+
+table.insert(connections, Players.PlayerAdded:Connect(onPlayerAdded))
+
 task.spawn(function()
     while running do
-        local ok, err = pcall(UpdateHitboxes)
+        local ok, err = pcall(UpdateAllHitboxes)
         if not ok then
             warn("[HitboxPatch] Error in update loop:", err)
         end
-        task.wait(30)
+        task.wait(5)
     end
 end)
